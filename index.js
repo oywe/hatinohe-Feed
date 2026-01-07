@@ -25,17 +25,19 @@ let cache = {
 
 app.get("/.well-known/did.json", (req, res) => {
   res.json({
-    "@context": ["https://www.w3.org/ns/did/v1"],
-    "id": "did:web:hatinohe-eed-oywe667-6syvp0ml.leapcell.dev",
-    "service": [
-      {
-        "id": "#bsky-feed",
-        "type": "BskyFeedGenerator",
-        "serviceEndpoint": "https://hatinohe-eed-oywe667-6syvp0ml.leapcell.dev",
-        "description": "#八戸 フィード"
-      }
-    ]
-  });
+  "@context": [
+    "https://www.w3.org/ns/did/v1"
+  ],
+  "id": "did:web:hatinohe-eed-oywe667-6syvp0ml.leapcell.dev",
+  "service": [
+    {
+      "id": "#bsky_fg",
+      "serviceEndpoint": "https://hatinohe-eed-oywe667-6syvp0ml.leapcell.dev",
+      "type": "BskyFeedGenerator"
+    }
+  ]
+}
+);
 });
 
 
