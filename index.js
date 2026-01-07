@@ -20,7 +20,7 @@ await agent.login({
 });
 
 // ===== キャッシュ =====
-const CACHE_TTL = 5 * 60 * 1000; // 5分
+const CACHE_TTL = 5 * 60 * 100; // 5分
 let cache = {
   time: 0,
   feed: [],
@@ -49,8 +49,8 @@ app.get("/xrpc/app.bsky.feed.getFeedSkeleton", async (req, res) => {
 
     // ① #八戸 の投稿
     const tagResult = await agent.app.bsky.feed.searchPosts({
-      q: "#八戸",
-      limit: 30,
+      q: "八戸",
+      limit: 60
     });
 
     // ② @noh.f5.si の投稿（タグ不要）
