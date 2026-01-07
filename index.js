@@ -29,13 +29,15 @@ app.get("/.well-known/did.json", (req, res) => {
     "id": "did:web:hatinohe-eed-oywe667-6syvp0ml.leapcell.dev",
     "service": [
       {
-        "id": "#feed",
+        "id": "#bsky-feed",
         "type": "BskyFeedGenerator",
-        "serviceEndpoint": "https://hatinohe-eed-oywe667-6syvp0ml.leapcell.dev"
+        "serviceEndpoint": "https://hatinohe-eed-oywe667-6syvp0ml.leapcell.dev",
+        "description": "#八戸 フィード"
       }
     ]
   });
 });
+
 
 
 app.get("/xrpc/app.bsky.feed.getFeedSkeleton", async (req, res) => {
