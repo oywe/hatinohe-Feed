@@ -10,17 +10,18 @@ const agent = new BskyAgent({
   service: "https://bsky.social",
 });
 
-// ★ 固定DID（← 実際の値に置き換えて）
-const NOH_DID = "did:plc:enoz6wiokkpoxjmenrtmzpuy";
+// ユーザーリスト（handle または DID を入れる）
+const USER_LIST = [
+  "noh.f5.si"
+];
 
-// ログイン（起動時1回）
 await agent.login({
   identifier: process.env.BSKY_ID,
   password: process.env.BSKY_APP_PASSWORD,
 });
 
 // ===== キャッシュ =====
-const CACHE_TTL = 5 * 60 * 100; // 5分
+const CACHE_TTL = 5 * 60 *333;
 let cache = {
   time: 0,
   feed: [],
@@ -47,23 +48,28 @@ app.get("/xrpc/app.bsky.feed.getFeedSkeleton", async (req, res) => {
       return res.json({ feed: cache.feed });
     }
 
+    const postSet = new Set();
+
     // ① #八戸 の投稿
     const tagResult = await agent.app.bsky.feed.searchPosts({
       q: "八戸",
-      limit: 60
+      limit:100
     });
-
-    // ② @noh.f5.si の投稿（タグ不要）
-    const userResult = await agent.app.bsky.feed.getAuthorFeed({
-      actor: NOH_DID,
-      limit: 10,
-    });
-
-    // URIで統合（重複防止）
-    const postSet = new Set();
 
     tagResult.data.posts.forEach(p => postSet.add(p.uri));
-    userResult.data.feed.forEach(item => postSet.add(item.post.uri));
+
+    // ② ユーザーリストの投稿
+    for (const actor of USER_LIST) {
+      try {
+        const userResult = await agent.app.bsky.feed.getAuthorFeed({
+          actor,
+          limit: 10
+        });
+        userResult.data.feed.forEach(item => postSet.add(item.post.uri));
+      } catch (err) {
+        console.warn(`Failed to fetch feed for ${actor}:`, err.message);
+      }
+    }
 
     const feed = Array.from(postSet).map(uri => ({ post: uri }));
 
@@ -82,3 +88,4 @@ app.get("/xrpc/app.bsky.feed.getFeedSkeleton", async (req, res) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log("Hachinohe feed running");
 });
+
